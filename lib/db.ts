@@ -6,10 +6,10 @@ import { INITIAL_RESERVATIONS, INITIAL_TASKS, GROUPS, STUDENTS } from './data'
 const globalForDb = globalThis as unknown as { db?: Database.Database }
 
 function createDatabase() {
-  const dataDirectory = path.join(process.cwd(), '.data')
-  fs.mkdirSync(dataDirectory, { recursive: true })
+  const folder = path.join(process.cwd(), '.data')
+  fs.mkdirSync(folder, { recursive: true })
 
-  const db = new Database(path.join(dataDirectory, 'tic-tareas.db'))
+  const db = new Database(path.join(folder, 'tic-tareas.db'))
   db.pragma('foreign_keys = ON')
 
   db.exec(`
@@ -54,7 +54,7 @@ function createDatabase() {
       FOREIGN KEY (group_id) REFERENCES groups(id)
     );
   `)
-
+  
   seedDatabase(db)
   return db
 }

@@ -164,7 +164,114 @@ export function StudentView() {
             </tbody>
           </table>
         </div>
-      </section>
+        <div className="hidden md:block overflow-x-auto rounded-x1 border border-border bg-card">
+          <table className="w-full min-w-[720px] text-sm">
+          </table>
+        </div>
+        <div className="grid gap-3 md:hidden">
+          {visible.map(
+            ({
+              task, 
+              state,
+              reservation,
+            }) => {
+              const prereqs = 
+              task.prerequisites
+              .map(
+                (id) =>
+                  tasks.find(
+                    (t) => t.id === id
+                  )?.code
+              )
+              .filter(Boolean)
+
+              const done = reservation?.checklist
+              .filter(Boolean).length ?? 0
+
+              return (
+                <article key={task.id}
+                 onClick={() => 
+                 setOpenTaskId(task.id)
+                 }
+                  className="rounded-x1 border border-border bg-card p-4">
+                  <div className="flex items-star justify-between gap-3">
+                    <div>
+                      <p className="font-mono text-xz text-muted-foreground">
+                        {task.code}
+                      </p>
+
+                      <h3 className="font-semibold">
+                        {task.title}
+                      </h3>
+
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {task.summary}
+                      </p>
+                    </div>
+
+                    <StatusBadge state={state} />
+
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+
+                      <CategoryTag>
+                        {task.category}
+                      </CategoryTag>
+
+                      <span className="rounded-full bg-muted px-2.5 py-1 text-xs">
+                        {task.points} puntos
+                      </span>
+                    </div>
+
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        Requiere: {prereqs.join(', ') : 'Ninguna'}
+                      </p>
+
+                      {(state === 'reservada' || state === 'rechazada') && (
+                        <p className="mt-2 text-xs text-muted-foreground">
+                           Avance: {done}/{task.requirements.length}{' '}requisitos
+                      </p>
+                     )}
+
+                    <div className="mt-4 flex justify-end">
+                       {state === 'disponible' ? (
+                        <Button
+                         size="sm"
+                         onClick={(e) => {
+                          e.stopPropagation()
+                          dispatch({ type: 'reserve', taskId: task.id})
+                          setOpenTaskId(task.id)
+                }}
+              >
+              Reservar
+            </Button>
+           ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e)} => {
+                e.stopPropagation()
+                setOpenTaskId(task.id)
+              }}
+              >
+                {state === 'reservada' || state === 'rechazada'
+                  ? 'Continuar'
+                  : 'Ver'}
+              </Button>
+            )}
+          </div>
+         </article>
+       )
+      })}
+
+      {visible.length === 0 && (
+        <p className="rounded-x1 border border-border bg-card px-4 py-10 text-center text-sm ext-muted-foregoround">
+          No hay mecánicas con este filtro.
+        </p>
+      )}
+    </div>
+  </section>
 
       <TaskDialog taskId={openTaskId} onClose={() => setOpenTaskId(null)} />
     </div>

@@ -36,6 +36,7 @@ type Action =
   | { type: 'review'; reservationId: string; approved: boolean; feedback: string }
   | { type: 'addTask'; task: Omit<Task, 'id' | 'code'>; taskId?: string; code?: string }
 
+
 function updateReservation(state: State, id: string, patch: (r: Reservation) => Partial<Reservation>): State {
   return {
     ...state,
